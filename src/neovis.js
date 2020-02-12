@@ -75,6 +75,8 @@ export default class NeoVis {
 	 */
 	async buildNodeVisObject(neo4jNode) {
 		let node = {};
+    node.originalLabels = neo4jNode.labels;
+		node.originalProperties = neo4jNode.properties;
 		let label = neo4jNode.labels[0];
 
 		let labelConfig = this._config && this._config.labels && this._config.labels[label];
@@ -174,6 +176,8 @@ export default class NeoVis {
 		edge.from = r.start.toInt();
 		edge.to = r.end.toInt();
 
+    edge.originalType = r.type;
+		edge.originalProperties = r.properties;
 		// hover tooltip. show all properties in the format <strong>key:</strong> value
 		edge.title = '';
 		for (let key in r.properties) {
