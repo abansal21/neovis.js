@@ -373,12 +373,14 @@ export default class NeoVis {
 		this._edges = {};
 		this._network.setData([]);
     this._data = {};
-    for(const eventType of this._registeredEvents){
-      this._network.off(eventType);
-    }
-    this._registeredEvents = [];
 	}
-
+  
+  removeAllEvents(){
+		for(const eventType of this._registeredEvents){
+			this._network.off(eventType);
+		}
+		  this._registeredEvents = [];
+	}
 
 	/**
 	 *
@@ -387,33 +389,38 @@ export default class NeoVis {
 	 */
 	registerOnEvent(eventType, handler) {
 		this._events.register(eventType, handler);
-    this._network.on(eventType, (eventData)=>{
-      let newEventData = {
-							nodes: [],
-							edges: [],
-							originalEvent: eventData
-						}
-						for (let nodeId of eventData.nodes) {
-							const node = this._data.nodes.get(nodeId)
-							const nodes = { properties : node.originalProperties,
-								lables: node.originalLabels
-							};
-							newEventData.nodes.push(node);
-						}
-						for (let edgeId of eventData.edges) {
-							const edge = this._data.edges.get(edgeId);
-							const edgeConfig = {
-								properties: edge.originalProperties,
-								types: edge.originalType
-								};
-							newEventData.edges.push(edge);
-						}
+    if(eventType != CompletionEvent){
+			this.registerOnEvent(CompletionEvent, (e)=>{
+        this._network.on(eventType, (eventData)=>{
+          let newEventData = {
+						nodes: [],
+						edges: [],
+						originalEvent: eventData
+					}
+					for (let nodeId of eventData.nodes) {
+						const node = this._data.nodes.get(nodeId)
+						const nodes = { 
+              properties : node.originalProperties,
+							lables: node.originalLabels
+						};
+						newEventData.nodes.push(node);
+					}
+					for (let edgeId of eventData.edges) {
+						const edge = this._data.edges.get(edgeId);
+						const edgeConfig = {
+							properties: edge.originalProperties,
+							types: edge.originalType
+						};
+						newEventData.edges.push(edge);
+					}
 						
-						this._events.generateEvent(eventType, newEventData);
-            this._registeredEvents.push(eventType);
-    });
+					this._events.generateEvent(eventType, newEventData);
+          this._registeredEvents.push(eventType);
+        });
+      });
     
-	}
+	  }
+  }
 
 
 	/**
