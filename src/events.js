@@ -1,10 +1,16 @@
 export const CompletionEvent = 'completed';
+export const ClickEvent = 'click';
+export const SelectEvent = 'select';
+export const DoubleClickEvent = 'doubleClick';
 
 export class EventController {
 
 	constructor() {
 		this._handlers = {
 			[CompletionEvent]: [],
+      [ClickEvent]: [],
+      [SelectEvent]: [],
+      [DoubleClickEvent]: [],
 		};
 	}
 
